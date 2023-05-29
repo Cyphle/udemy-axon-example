@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: products-service
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${instanceId:${random.value}}
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+axon:
+  eventhandling:
+    processors:
+      product-group:
+        mode: subscribing

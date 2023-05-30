@@ -1,7 +1,7 @@
 package com.axon.udemy.product.command.infrastructure.interceptors
 
-import com.axon.udemy.command.domain.CreateProductCommand
-import com.axon.udemy.command.infrastructure.lookup.ProductLookUpRepository
+import com.axon.udemy.product.command.domain.CreateProductCommand
+import com.axon.udemy.product.command.infrastructure.lookup.ProductLookUpRepository
 import org.axonframework.commandhandling.CommandMessage
 import org.axonframework.messaging.MessageDispatchInterceptor
 import org.slf4j.LoggerFactory

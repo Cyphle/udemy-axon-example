@@ -1,6 +1,6 @@
-package com.axon.udemy.command.domain
+package com.axon.udemy.order.command.domain
 
-import com.axon.udemy.core.OrderStatus
+import com.axon.udemy.order.core.OrderStatus
 import org.axonframework.modelling.command.TargetAggregateIdentifier
 
 data class CreateOrderCommand(

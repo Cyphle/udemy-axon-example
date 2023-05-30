@@ -1,8 +1,8 @@
 package com.axon.udemy.product.command.domain
 
-import com.axon.udemy.core.events.ProductCreatedEvent
 import com.axon.udemy.dependancy.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
+import com.axon.udemy.product.core.events.ProductCreatedEvent
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateIdentifier

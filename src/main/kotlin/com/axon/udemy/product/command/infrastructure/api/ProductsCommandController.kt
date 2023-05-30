@@ -1,6 +1,6 @@
 package com.axon.udemy.product.command.infrastructure.api
 
-import com.axon.udemy.command.domain.CreateProductCommand
+import com.axon.udemy.product.command.domain.CreateProductCommand
 import jakarta.validation.Valid
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.slf4j.LoggerFactory

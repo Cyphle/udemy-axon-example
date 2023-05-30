@@ -1,4 +1,4 @@
-package com.axon.udemy.core
+package com.axon.udemy.order.core
 
 data class OrderCreatedEvent(
     val orderId: String,

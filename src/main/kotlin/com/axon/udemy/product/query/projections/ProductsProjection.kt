@@ -1,12 +1,13 @@
 package com.axon.udemy.product.query.projections
 
-import com.axon.udemy.core.events.ProductCreatedEvent
 import com.axon.udemy.dependancy.events.ProductReservedEvent
-import com.axon.udemy.query.jpa.entities.ProductEntity
-import com.axon.udemy.query.jpa.repositories.ProductRepository
+import com.axon.udemy.product.core.events.ProductCreatedEvent
+import com.axon.udemy.product.query.jpa.entities.ProductEntity
+import com.axon.udemy.product.query.jpa.repositories.ProductRepository
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.messaging.interceptors.ExceptionHandler
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component

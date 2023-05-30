@@ -1,4 +1,4 @@
-package com.axon.udemy.command.infrastructure.api
+package com.axon.udemy.order.command.infrastructure.api
 
 data class CreateOrderRestModel(
     val productId: String,

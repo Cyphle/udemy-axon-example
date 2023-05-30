@@ -1,6 +1,6 @@
-package com.axon.udemy.query.repositories
+package com.axon.udemy.order.query.repositories
 
-import com.axon.udemy.core.OrderStatus
+import com.axon.udemy.order.core.OrderStatus
 import jakarta.persistence.*
 import java.io.Serializable
 

@@ -1,6 +1,6 @@
 package com.axon.udemy.product.command.config
 
-import com.axon.udemy.command.infrastructure.interceptors.CreateProductCommandInterceptor
+import com.axon.udemy.product.command.infrastructure.interceptors.CreateProductCommandInterceptor
 import org.axonframework.commandhandling.CommandBus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext

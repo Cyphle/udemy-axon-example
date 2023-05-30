@@ -1,7 +1,7 @@
-package com.axon.udemy.command.domain
+package com.axon.udemy.order.command.domain
 
-import com.axon.udemy.core.OrderCreatedEvent
-import com.axon.udemy.core.OrderStatus
+import com.axon.udemy.order.core.OrderCreatedEvent
+import com.axon.udemy.order.core.OrderStatus
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateIdentifier

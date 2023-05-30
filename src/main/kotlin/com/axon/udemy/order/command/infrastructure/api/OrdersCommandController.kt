@@ -1,7 +1,7 @@
-package com.axon.udemy.command.infrastructure.api
+package com.axon.udemy.order.command.infrastructure.api
 
-import com.axon.udemy.command.domain.CreateOrderCommand
-import com.axon.udemy.core.OrderStatus
+import com.axon.udemy.order.command.domain.CreateOrderCommand
+import com.axon.udemy.order.core.OrderStatus
 import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

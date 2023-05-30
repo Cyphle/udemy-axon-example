@@ -1,6 +1,6 @@
 package com.axon.udemy.product.query.api
 
-import com.axon.udemy.query.jpa.entities.ProductEntity
+import com.axon.udemy.product.query.jpa.entities.ProductEntity
 import java.math.BigDecimal
 
 data class ProductRestModel(

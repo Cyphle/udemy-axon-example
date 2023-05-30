@@ -1,6 +1,6 @@
 package com.axon.udemy.saga
 
-import com.axon.udemy.core.OrderCreatedEvent
+import com.axon.udemy.order.core.OrderCreatedEvent
 import com.axon.udemy.dependancy.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import org.axonframework.commandhandling.gateway.CommandGateway

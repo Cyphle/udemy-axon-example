@@ -1,8 +1,8 @@
-package com.axon.udemy.query.projections
+package com.axon.udemy.order.query.projections
 
-import com.axon.udemy.core.OrderCreatedEvent
-import com.axon.udemy.query.repositories.OrderEntity
-import com.axon.udemy.query.repositories.OrderRepository
+import com.axon.udemy.order.core.OrderCreatedEvent
+import com.axon.udemy.order.query.repositories.OrderEntity
+import com.axon.udemy.order.query.repositories.OrderRepository
 import org.axonframework.eventhandling.EventHandler
 import org.springframework.stereotype.Component
 

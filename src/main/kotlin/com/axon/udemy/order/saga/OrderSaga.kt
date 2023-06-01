@@ -13,16 +13,19 @@ import org.axonframework.modelling.saga.StartSaga
 import org.axonframework.queryhandling.QueryGateway
 import org.axonframework.spring.stereotype.Saga
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Saga
-class OrderSaga(
+class OrderSaga{
     @Transient
-    private val commandGateway: CommandGateway,
+    @Autowired
+    private lateinit var commandGateway: CommandGateway
     @Transient
-    private val queryGateway: QueryGateway
-) {
+    @Autowired
+    private lateinit var queryGateway: QueryGateway
+
     @StartSaga
     @SagaEventHandler(associationProperty = "orderId")
     fun handle(orderCreatedEvent: OrderCreatedEvent) {
@@ -38,6 +41,7 @@ class OrderSaga(
         commandGateway.send(reserveProductCommand) { commandMessage, commandResultMessage ->
             // If isExceptional est dans le cas où il y a eu une exception et qu'il faut rollback la transaction et envoyer des événements de compensation
             if (commandResultMessage.isExceptional) {
+                LOGGER.error("Error reserving product for orderId {}. Exception: {}", orderCreatedEvent.orderId, commandResultMessage.exceptionResult().message)
                 // Start compensating transaction
             }
         }
@@ -51,7 +55,7 @@ class OrderSaga(
         val fetchUserPaymentDetailsQuery = FetchUserPaymentDetailsQuery(productReservedEvent.userId)
         // Query retourne une completable future
         val user = try {
-            queryGateway.query(fetchUserPaymentDetailsQuery, ResponseTypes.instanceOf(User::class.java)).join()
+            queryGateway.query(fetchUserPaymentDetailsQuery, ResponseTypes.instanceOf(User::class.java))?.join()
         } catch (e: Exception) {
             LOGGER.error("Error fetching user payment details for user {}. Exception: {}", productReservedEvent.userId, e.message)
             // Start compensating transaction

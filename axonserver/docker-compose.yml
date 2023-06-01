@@ -3,6 +3,7 @@ services:
   axonserver:
     image: axoniq/axonserver
     hostname: axonserver
+    platform: linux/arm64/v8
     volumes:
       - axonserver-data:/data
       - axonserver-events:/eventdata

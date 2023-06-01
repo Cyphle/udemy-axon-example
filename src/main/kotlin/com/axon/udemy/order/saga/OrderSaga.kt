@@ -3,6 +3,7 @@ package com.axon.udemy.order.saga
 import com.axon.udemy.order.core.OrderCreatedEvent
 import com.axon.udemy.dependancy.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
+import com.axon.udemy.shared.commands.ProcessPaymentCommand
 import com.axon.udemy.user.core.User
 import com.axon.udemy.user.query.FetchUserPaymentDetailsQuery
 import org.axonframework.commandhandling.gateway.CommandGateway
@@ -12,6 +13,8 @@ import org.axonframework.modelling.saga.StartSaga
 import org.axonframework.queryhandling.QueryGateway
 import org.axonframework.spring.stereotype.Saga
 import org.slf4j.LoggerFactory
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Saga
 class OrderSaga(
@@ -59,9 +62,29 @@ class OrderSaga(
         }
 
         LOGGER.info("Successfully fetched user payment details for user {}", productReservedEvent.userId)
+
+        val processPaymentCommand = ProcessPaymentCommand(
+            paymentId = UUID.randomUUID().toString(),
+            orderId = productReservedEvent.orderId,
+            paymentDetails = user.paymentDetails
+        )
+
+        val result = try {
+            commandGateway.sendAndWait(processPaymentCommand, 10, TimeUnit.SECONDS)
+        } catch (e: Exception) {
+            LOGGER.error("Error processing payment for orderId {}. Exception: {}", productReservedEvent.orderId, e.message)
+            // Start compensating transaction
+            return
+        }
+
+        if (result == null) {
+            LOGGER.error("The ProcessPaymentCommand resulted in NULL for orderId {}", productReservedEvent.orderId)
+            // Start compensating transaction
+            return
+        }
     }
 
     companion object {
-        val LOGGER = LoggerFactory.getLogger(OrderSaga::class.java)
+        private val LOGGER = LoggerFactory.getLogger(OrderSaga::class.java)
     }
 }

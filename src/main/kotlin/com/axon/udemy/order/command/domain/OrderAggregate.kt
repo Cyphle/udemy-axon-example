@@ -1,5 +1,6 @@
 package com.axon.udemy.order.command.domain
 
+import com.axon.udemy.order.core.OrderApprovedEvent
 import com.axon.udemy.order.core.OrderCreatedEvent
 import com.axon.udemy.order.core.OrderStatus
 import org.axonframework.commandhandling.CommandHandler
@@ -34,6 +35,15 @@ class OrderAggregate {
         AggregateLifecycle.apply(event)
     }
 
+    @CommandHandler
+    fun handle(approveOrderCommand: ApproveOrderCommand) {
+        val event = OrderApprovedEvent(
+            orderId = approveOrderCommand.orderId
+        )
+
+        AggregateLifecycle.apply(event)
+    }
+
     @EventSourcingHandler
     fun on(orderCreatedEvent: OrderCreatedEvent) {
         orderId = orderCreatedEvent.orderId
@@ -42,5 +52,10 @@ class OrderAggregate {
         quantity = orderCreatedEvent.quantity
         addressId = orderCreatedEvent.addressId
         orderStatus = orderCreatedEvent.orderStatus
+    }
+
+    @EventSourcingHandler
+    fun on(orderApprovedEvent: OrderApprovedEvent) {
+        orderStatus = orderApprovedEvent.orderStatus
     }
 }

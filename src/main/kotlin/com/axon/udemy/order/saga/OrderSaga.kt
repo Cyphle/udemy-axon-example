@@ -6,6 +6,8 @@ import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.order.command.domain.ApproveOrderCommand
 import com.axon.udemy.order.command.domain.RejectOrderCommand
 import com.axon.udemy.order.core.OrderApprovedEvent
+import com.axon.udemy.order.query.FindOrderQuery
+import com.axon.udemy.order.query.OrderSummary
 import com.axon.udemy.payment.command.PaymentProcessedEvent
 import com.axon.udemy.product.core.events.ProductReservationCancelledEvent
 import com.axon.udemy.shared.commands.CancelProductReservationCommand
@@ -22,6 +24,7 @@ import org.axonframework.modelling.saga.SagaEventHandler
 import org.axonframework.modelling.saga.SagaLifecycle.end
 import org.axonframework.modelling.saga.StartSaga
 import org.axonframework.queryhandling.QueryGateway
+import org.axonframework.queryhandling.QueryUpdateEmitter
 import org.axonframework.spring.stereotype.Saga
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,6 +46,10 @@ class OrderSaga {
     @Transient
     @Autowired
     private lateinit var deadlineManager: DeadlineManager
+
+    @Transient
+    @Autowired
+    private lateinit var queryUpdateEmitter: QueryUpdateEmitter
 
     private var deadlineId: String? = null
 
@@ -170,11 +177,18 @@ class OrderSaga {
     }
 
     // Compensation flow
+    @EndSaga
     @SagaEventHandler(associationProperty = "orderId")
     fun handle(orderRejectedEvent: OrderRejectedEvent) {
         LOGGER.info("Successfully rejected order with orderId {}", orderRejectedEvent.orderId)
+
+        queryUpdateEmitter.emit(
+            FindOrderQuery::class.java,
+            { query -> true },
+            OrderSummary(orderRejectedEvent.orderId, orderRejectedEvent.orderStatus.name, orderRejectedEvent.reason)
+        )
         // End compensating transaction
-        end()
+//        end()
     }
 
     @EndSaga
@@ -182,6 +196,12 @@ class OrderSaga {
     fun handle(orderApprovedEvent: OrderApprovedEvent) {
         LOGGER.info("Saga is completed with OrderApprovedEvent for orderId {}", orderApprovedEvent.orderId)
 
+        // Permet de mettre à jour une subcription query
+        queryUpdateEmitter.emit(
+            FindOrderQuery::class.java,
+            { query -> true },
+            OrderSummary(orderApprovedEvent.orderId, orderApprovedEvent.orderStatus.name, "")
+        )
 //        SagaLifecycle.end() => Alternative à @EndSaga
     }
 

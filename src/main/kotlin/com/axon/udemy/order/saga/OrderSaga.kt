@@ -14,6 +14,8 @@ import com.axon.udemy.shared.events.OrderRejectedEvent
 import com.axon.udemy.user.core.User
 import com.axon.udemy.user.query.FetchUserPaymentDetailsQuery
 import org.axonframework.commandhandling.gateway.CommandGateway
+import org.axonframework.deadline.DeadlineManager
+import org.axonframework.deadline.annotation.DeadlineHandler
 import org.axonframework.messaging.responsetypes.ResponseTypes
 import org.axonframework.modelling.saga.EndSaga
 import org.axonframework.modelling.saga.SagaEventHandler
@@ -23,6 +25,8 @@ import org.axonframework.queryhandling.QueryGateway
 import org.axonframework.spring.stereotype.Saga
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -35,6 +39,12 @@ class OrderSaga {
     @Transient
     @Autowired
     private lateinit var queryGateway: QueryGateway
+
+    @Transient
+    @Autowired
+    private lateinit var deadlineManager: DeadlineManager
+
+    private var deadlineId: String? = null
 
     @StartSaga
     @SagaEventHandler(associationProperty = "orderId")
@@ -95,6 +105,13 @@ class OrderSaga {
 
         LOGGER.info("Successfully fetched user payment details for user {}", productReservedEvent.userId)
 
+        // Deadline pour revert la transaction si le payment n'est pas processé dans les 10 secondes
+        deadlineId = deadlineManager.schedule(
+            Duration.of(10, ChronoUnit.SECONDS),
+            "payment-processing-deadline",
+            productReservedEvent
+        )
+
         val processPaymentCommand = ProcessPaymentCommand(
             paymentId = UUID.randomUUID().toString(),
             orderId = productReservedEvent.orderId,
@@ -102,7 +119,9 @@ class OrderSaga {
         )
 
         val result = try {
-            commandGateway.sendAndWait(processPaymentCommand, 10, TimeUnit.SECONDS)
+//            commandGateway.sendAndWait(processPaymentCommand, 10, TimeUnit.SECONDS)
+            // No wait for deadline example
+            commandGateway.sendAndWait(processPaymentCommand)
         } catch (e: Exception) {
             LOGGER.error(
                 "Error processing payment for orderId {}. Exception: {}",
@@ -124,6 +143,8 @@ class OrderSaga {
 
     @SagaEventHandler(associationProperty = "orderId")
     fun handle(paymentProcessedEvent: PaymentProcessedEvent) {
+        cancelDeadline()
+
         LOGGER.info("PaymentProcessedEvent is called for orderId {}", paymentProcessedEvent.orderId)
 
         val approveOrderCommand = ApproveOrderCommand(paymentProcessedEvent.orderId)
@@ -164,7 +185,24 @@ class OrderSaga {
 //        SagaLifecycle.end() => Alternative à @EndSaga
     }
 
+    // Handle deadline that is triggered in fun handle(productReservedEvent: ProductReservedEvent)
+    @DeadlineHandler(deadlineName = "payment-processing-deadline")
+    fun handlePaymentDeadline(productReservedEvent: ProductReservedEvent) {
+        LOGGER.info("Payment processing deadline took place. Sending a compensating command to cancel order {}", productReservedEvent.orderId)
+        // Start compensating transaction
+        cancelProductReservation(productReservedEvent, "Payment timeout")
+    }
+
+    private fun cancelDeadline() {
+        if (deadlineId != null) {
+            deadlineManager.cancelSchedule("payment-processing-deadline", deadlineId ?: "")
+        }
+//        deadlineManager.cancelAll("payment-processing-deadline")
+    }
+
     private fun cancelProductReservation(productReservedEvent: ProductReservedEvent, reason: String) {
+        cancelDeadline()
+
         val publishProductReservationCommand = CancelProductReservationCommand(
             productId = productReservedEvent.productId,
             quantity = productReservedEvent.quantity,

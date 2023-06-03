@@ -6,6 +6,7 @@ import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.order.command.domain.ApproveOrderCommand
 import com.axon.udemy.order.core.OrderApprovedEvent
 import com.axon.udemy.payment.command.PaymentProcessedEvent
+import com.axon.udemy.shared.commands.CancelProductReservationCommand
 import com.axon.udemy.shared.commands.ProcessPaymentCommand
 import com.axon.udemy.user.core.User
 import com.axon.udemy.user.query.FetchUserPaymentDetailsQuery
@@ -81,9 +82,11 @@ class OrderSaga {
                 e.message
             )
             // Start compensating transaction
+            cancelProductReservation(productReservedEvent, e.message ?: "Could not fetch user payment details")
             return
         } ?: run {
             // Start compensating transaction
+            cancelProductReservation(productReservedEvent, "Could not fetch user payment details")
             return
         }
 
@@ -104,12 +107,14 @@ class OrderSaga {
                 e.message
             )
             // Start compensating transaction
+            cancelProductReservation(productReservedEvent, e.message ?: "Could not process user payment")
             return
         }
 
         if (result == null) {
             LOGGER.error("The ProcessPaymentCommand resulted in NULL for orderId {}", productReservedEvent.orderId)
             // Start compensating transaction
+            cancelProductReservation(productReservedEvent, "Could not process user payment")
             return
         }
     }
@@ -137,6 +142,17 @@ class OrderSaga {
         LOGGER.info("Saga is completed with OrderApprovedEvent for orderId {}", orderApprovedEvent.orderId)
 
 //        SagaLifecycle.end() => Alternative à @EndSaga
+    }
+
+    private fun cancelProductReservation(productReservedEvent: ProductReservedEvent, reason: String) {
+        val publishProductReservationCommand = CancelProductReservationCommand(
+            productId = productReservedEvent.productId,
+            quantity = productReservedEvent.quantity,
+            orderId = productReservedEvent.orderId,
+            userId = productReservedEvent.userId,
+            reason = reason
+        )
+        commandGateway.send<CancelProductReservationCommand>(publishProductReservationCommand)
     }
 
     companion object {

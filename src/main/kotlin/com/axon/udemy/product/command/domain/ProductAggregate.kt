@@ -3,6 +3,8 @@ package com.axon.udemy.product.command.domain
 import com.axon.udemy.dependancy.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.product.core.events.ProductCreatedEvent
+import com.axon.udemy.product.core.events.ProductReservationCancelledEvent
+import com.axon.udemy.shared.commands.CancelProductReservationCommand
 import org.axonframework.commandhandling.CommandHandler
 import org.axonframework.eventsourcing.EventSourcingHandler
 import org.axonframework.modelling.command.AggregateIdentifier
@@ -64,6 +66,19 @@ class ProductAggregate {
         AggregateLifecycle.apply(productReservedEvent)
     }
 
+    @CommandHandler
+    fun handle(cancelProductReservationCommand: CancelProductReservationCommand) {
+        val productReservationCancelledEvent = ProductReservationCancelledEvent(
+            productId = cancelProductReservationCommand.productId,
+            orderId = cancelProductReservationCommand.orderId,
+            quantity = cancelProductReservationCommand.quantity,
+            userId = cancelProductReservationCommand.userId,
+            reason = cancelProductReservationCommand.reason
+        )
+
+        AggregateLifecycle.apply(productReservationCancelledEvent)
+    }
+
     @EventSourcingHandler
     fun on(productCreatedEvent: ProductCreatedEvent) {
         productId = productCreatedEvent.productId
@@ -75,5 +90,10 @@ class ProductAggregate {
     @EventSourcingHandler
     fun on(productReservedEvent: ProductReservedEvent) {
         quantity -= productReservedEvent.quantity
+    }
+
+    @EventSourcingHandler
+    fun on(productReservationCancelledEvent: ProductReservationCancelledEvent) {
+        quantity += productReservationCancelledEvent.quantity
     }
 }

@@ -4,10 +4,14 @@ import com.axon.udemy.order.core.OrderCreatedEvent
 import com.axon.udemy.dependancy.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.order.command.domain.ApproveOrderCommand
+import com.axon.udemy.order.command.domain.RejectOrderCommand
 import com.axon.udemy.order.core.OrderApprovedEvent
 import com.axon.udemy.payment.command.PaymentProcessedEvent
+import com.axon.udemy.product.core.events.ProductReservationCancelledEvent
+import com.axon.udemy.shared.commands.CancelProductReservationCommand
 import com.axon.udemy.shared.commands.CancelProductReservationCommand
 import com.axon.udemy.shared.commands.ProcessPaymentCommand
+import com.axon.udemy.shared.events.OrderRejectedEvent
 import com.axon.udemy.user.core.User
 import com.axon.udemy.user.query.FetchUserPaymentDetailsQuery
 import org.axonframework.commandhandling.gateway.CommandGateway
@@ -134,6 +138,23 @@ class OrderSaga {
                 // Start compensating transaction
             }
         }
+    }
+
+    // Compensation flow
+    @SagaEventHandler(associationProperty = "orderId")
+    fun handle(productReservationCancelledEvent: ProductReservationCancelledEvent) {
+        LOGGER.info("ProductReservationCancelledEvent is called for orderId {}", productReservationCancelledEvent.orderId)
+        // Continue compensating transaction
+        val rejectOrderCommand = RejectOrderCommand(productReservationCancelledEvent.orderId, productReservationCancelledEvent.reason)
+        commandGateway.send<RejectOrderCommand>(rejectOrderCommand)
+    }
+
+    // Compensation flow
+    @SagaEventHandler(associationProperty = "orderId")
+    fun handle(orderRejectedEvent: OrderRejectedEvent) {
+        LOGGER.info("Successfully rejected order with orderId {}", orderRejectedEvent.orderId)
+        // End compensating transaction
+        end()
     }
 
     @EndSaga

@@ -2,6 +2,7 @@ package com.axon.udemy.product.query.projections
 
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.product.core.events.ProductCreatedEvent
+import com.axon.udemy.product.core.events.ProductReservationCancelledEvent
 import com.axon.udemy.product.query.jpa.entities.ProductEntity
 import com.axon.udemy.product.query.jpa.repositories.ProductRepository
 import org.axonframework.config.ProcessingGroup
@@ -50,6 +51,15 @@ class ProductsProjection(private val productRepository: ProductRepository) {
         productRepository.save(productEntity)
 
         LOGGER.info("ProductReservedEvent is called for orderId {} and productId {}", event.orderId, event.productId)
+    }
+
+    @EventHandler
+    fun on(event: ProductReservationCancelledEvent) {
+        val productEntity = productRepository.findByProductId(event.productId)
+        productEntity.quantity += event.quantity
+        productRepository.save(productEntity)
+
+        LOGGER.info("ProductReservationCancelledEvent is called for orderId {} and productId {}", event.orderId, event.productId)
     }
 
     companion object {

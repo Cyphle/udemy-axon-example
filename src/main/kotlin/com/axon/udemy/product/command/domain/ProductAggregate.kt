@@ -13,7 +13,7 @@ import org.axonframework.spring.stereotype.Aggregate
 import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 
-@Aggregate
+@Aggregate(snapshotTriggerDefinition = "productSnapshotTriggerDefinition")
 class ProductAggregate {
     // IMPORTANT : l'aggregate identifier doit être nullable et default à null sinon Axon pense que "" est un identifier
     @AggregateIdentifier

@@ -1,4 +1,4 @@
-package com.axon.udemy.product.core.config
+package com.axon.udemy.product.config
 
 import com.axon.udemy.product.core.errorhandling.ProductsServiceEventsErrorHandler
 import org.axonframework.config.EventProcessingConfigurer

@@ -7,6 +7,7 @@ import com.axon.udemy.product.query.jpa.entities.ProductEntity
 import com.axon.udemy.product.query.jpa.repositories.ProductRepository
 import org.axonframework.config.ProcessingGroup
 import org.axonframework.eventhandling.EventHandler
+import org.axonframework.eventhandling.ResetHandler
 import org.axonframework.messaging.interceptors.ExceptionHandler
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -60,6 +61,11 @@ class ProductsProjection(private val productRepository: ProductRepository) {
         productRepository.save(productEntity)
 
         LOGGER.info("ProductReservationCancelledEvent is called for orderId {} and productId {}", event.orderId, event.productId)
+    }
+
+    @ResetHandler
+    fun reset() {
+        productRepository.deleteAll()
     }
 
     companion object {

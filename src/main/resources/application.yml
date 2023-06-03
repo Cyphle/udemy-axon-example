@@ -15,4 +15,6 @@ axon:
   eventhandling:
     processors:
       product-group:
-        mode: subscribing
+#        mode: subscribing
+        mode: tracking # Ca c'est chiant s'il faut changer le mode pour pouvoir utiliser ce processor. Est-ce qu'on peut en avoir un dédié au replay ?.
+        # Apres est-ce que c'est nécessaire d'avoir des processor en mode subscribing ? c'est plus pour du rollback quand on a la query au même endroit que la commande et encore...

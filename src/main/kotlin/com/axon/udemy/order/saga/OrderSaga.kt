@@ -9,7 +9,6 @@ import com.axon.udemy.order.core.OrderApprovedEvent
 import com.axon.udemy.payment.command.PaymentProcessedEvent
 import com.axon.udemy.product.core.events.ProductReservationCancelledEvent
 import com.axon.udemy.shared.commands.CancelProductReservationCommand
-import com.axon.udemy.shared.commands.CancelProductReservationCommand
 import com.axon.udemy.shared.commands.ProcessPaymentCommand
 import com.axon.udemy.shared.events.OrderRejectedEvent
 import com.axon.udemy.user.core.User

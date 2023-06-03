@@ -78,6 +78,11 @@ class OrderSaga {
                     commandResultMessage.exceptionResult().message
                 )
                 // Start compensating transaction
+                val rejectOrderCommand = RejectOrderCommand(
+                    orderId = orderCreatedEvent.orderId,
+                    reason = commandResultMessage.exceptionResult().message ?: "Unknown error"
+                )
+                commandGateway.send<RejectOrderCommand>(rejectOrderCommand)
             }
         }
     }

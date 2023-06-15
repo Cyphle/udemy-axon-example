@@ -22,6 +22,7 @@
 		<spring-cloud.version>2022.0.2</spring-cloud.version>
 		<axon.version>4.7.4</axon.version>
 		<google-guava.version>30.1-jre</google-guava.version>
+		<testcontainers.version>1.17.6</testcontainers.version>
 	</properties>
 
 	<dependencies>
@@ -73,6 +74,11 @@
 			<artifactId>kotlin-stdlib</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -81,8 +87,16 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.holixon.axon.testing</groupId>
+			<artifactId>axon-server-testcontainer</artifactId>
+			<version>0.0.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.testcontainers.containers.startupcheck.MinimumDurationRunningStartupCheckStrategy
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.containers.wait.strategy.WaitStrategy
 import org.testcontainers.junit.jupiter.Container
@@ -32,7 +33,13 @@ internal class AxonServerContainerKotlinITest {
             .build().apply {
 //                Wait.forHealthcheck().withStartupTimeout(Duration.ofSeconds(180))
                 // https://java.testcontainers.org/features/startup_and_waits/#waiting-for-200-ok
+                // https://java.testcontainers.org/features/startup_and_waits/
 //                Wait.withStartupTimeout(Duration.ofSeconds(180))
+                withStartupCheckStrategy(
+                    MinimumDurationRunningStartupCheckStrategy(
+                        Duration.ofSeconds(240)
+                    )
+                )
                 logger.info { "------ $this" }
             }
 

@@ -1,11 +1,11 @@
 package com.axon.udemy.order.saga
 
-import com.axon.udemy.order.core.OrderCreatedEvent
-import com.axon.udemy.order.core.OrderStatus
-import com.axon.udemy.product.core.events.ProductCreatedEvent
-import com.axon.udemy.shared.commands.ReserveProductCommand
+import com.axon.udemy.command.order.domain.events.OrderCreatedEvent
+import com.axon.udemy.command.order.domain.OrderStatus
+import com.axon.udemy.command.saga.OrderSaga
+import com.axon.udemy.command.product.domain.events.ProductCreatedEvent
+import com.axon.udemy.command.product.domain.ReserveProductCommand
 import org.axonframework.test.saga.SagaTestFixture
-import org.axonframework.test.utils.CallbackBehavior
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal

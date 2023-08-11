@@ -1,6 +1,6 @@
 package com.axon.udemy.product.command.domain
 
-import com.axon.udemy.dependancy.commands.ReserveProductCommand
+import com.axon.udemy.shared.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.product.core.events.ProductCreatedEvent
 import com.axon.udemy.product.core.events.ProductReservationCancelledEvent

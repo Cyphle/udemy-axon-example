@@ -1,7 +1,7 @@
 package com.axon.udemy.order.saga
 
 import com.axon.udemy.order.core.OrderCreatedEvent
-import com.axon.udemy.dependancy.commands.ReserveProductCommand
+import com.axon.udemy.shared.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.order.command.domain.ApproveOrderCommand
 import com.axon.udemy.order.command.domain.RejectOrderCommand
@@ -21,7 +21,6 @@ import org.axonframework.deadline.annotation.DeadlineHandler
 import org.axonframework.messaging.responsetypes.ResponseTypes
 import org.axonframework.modelling.saga.EndSaga
 import org.axonframework.modelling.saga.SagaEventHandler
-import org.axonframework.modelling.saga.SagaLifecycle.end
 import org.axonframework.modelling.saga.StartSaga
 import org.axonframework.queryhandling.QueryGateway
 import org.axonframework.queryhandling.QueryUpdateEmitter
@@ -31,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 @Saga
 class OrderSaga {

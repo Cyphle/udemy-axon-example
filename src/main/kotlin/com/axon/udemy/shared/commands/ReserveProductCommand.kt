@@ -1,4 +1,4 @@
-package com.axon.udemy.dependancy.commands
+package com.axon.udemy.shared.commands
 
 import org.axonframework.modelling.command.TargetAggregateIdentifier
 

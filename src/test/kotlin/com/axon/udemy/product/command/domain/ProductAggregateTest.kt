@@ -1,8 +1,8 @@
 package com.axon.udemy.product.command.domain
 
-import com.axon.udemy.shared.commands.ReserveProductCommand
 import com.axon.udemy.dependancy.events.ProductReservedEvent
 import com.axon.udemy.product.core.events.ProductCreatedEvent
+import com.axon.udemy.shared.commands.ReserveProductCommand
 import org.axonframework.test.aggregate.AggregateTestFixture
 import org.axonframework.test.aggregate.FixtureConfiguration
 import org.junit.jupiter.api.Test
@@ -13,7 +13,7 @@ class ProductAggregateTest {
     @Test
     fun `should create product`() {
         fixture
-            .given()
+            .givenNoPriorActivity()
             .`when`(
                 CreateProductCommand(
                     productId = "123",
@@ -59,12 +59,14 @@ class ProductAggregateTest {
                     quantity = 10
                 )
             )
-            .`when`(ReserveProductCommand(
-                productId = "123",
-                quantity = 5,
-                orderId = "order-1",
-                userId = "user-1"
-            ))
+            .`when`(
+                ReserveProductCommand(
+                    productId = "123",
+                    quantity = 5,
+                    orderId = "order-1",
+                    userId = "user-1"
+                )
+            )
             .expectSuccessfulHandlerExecution()
             .expectEvents(
                 ProductReservedEvent(
@@ -74,5 +76,26 @@ class ProductAggregateTest {
                     userId = "user-1"
                 )
             )
+    }
+
+    @Test
+    fun `should validate aggregate state`() {
+        fixture
+            .givenNoPriorActivity()
+            .`when`(
+                CreateProductCommand(
+                    productId = "123",
+                    title = "Test",
+                    price = 10.0.toBigDecimal(),
+                    quantity = 10
+                )
+            )
+            .expectSuccessfulHandlerExecution()
+            .expectState { state ->
+                assert(state.productId == "123")
+                assert(state.title == "Test")
+                assert(state.price == 10.0.toBigDecimal())
+                assert(state.quantity == 10)
+            }
     }
 }

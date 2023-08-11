@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class UdemyApplication
+class AxonExampleApplication
 
 fun main(args: Array<String>) {
-	runApplication<UdemyApplication>(*args)
+	runApplication<AxonExampleApplication>(*args)
 }
